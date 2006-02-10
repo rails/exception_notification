@@ -50,7 +50,7 @@ module ExceptionNotifiable
 
   def local_request?
     remote = IPAddr.new(request.remote_ip)
-    self.class.local_addresses.detect { |addr| addr.include?(remote) }
+    !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
   end
 
   def render_404
