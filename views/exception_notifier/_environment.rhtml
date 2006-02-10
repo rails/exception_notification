@@ -2,3 +2,6 @@
 <% @request.env.keys.sort.each do |key| -%>
 * <%= "%*-s: %s" % [max.length, key, @request.env[key].to_s.strip] %>
 <% end -%>
+
+* Process: <%= $$ %>
+* Server : <%= `hostname -s`.chomp %>

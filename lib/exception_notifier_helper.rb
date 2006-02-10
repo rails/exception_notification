@@ -25,8 +25,8 @@ module ExceptionNotifierHelper
   APP_PATH = "#{RAILS_ROOT}/app/#{VIEW_PATH}"
 
   def render_section(section)
-    summary = render_overridable(section).strip
     RAILS_DEFAULT_LOGGER.info("rendering section #{section.inspect}")
+    summary = render_overridable(section).strip
     unless summary.blank?
       title = render_overridable(:title, :locals => { :title => section }).strip
       "#{title}\n\n#{summary.gsub(/^/, "  ")}\n\n"
@@ -34,15 +34,20 @@ module ExceptionNotifierHelper
   end
 
   def render_overridable(partial, options={})
-    if File.exist?("#{APP_PATH}/_#{partial}.rhtml")
-      render(options.merge(:file => "#{APP_PATH}/_#{partial}.rhtml", :use_full_path => false))
+    if File.exist?(path = "#{APP_PATH}/_#{partial}.rhtml")
+      render(options.merge(:file => path, :use_full_path => false))
+    elsif File.exist?(path = "#{File.dirname(__FILE__)}/../#{VIEW_PATH}/_#{partial}.rhtml")
+      render(options.merge(:file => path, :use_full_path => false))
     else
-      render(options.merge(:file => "#{File.dirname(__FILE__)}/../#{VIEW_PATH}/_#{partial}.rhtml", :use_full_path => false))
+      ""
     end
   end
 
-  def inspect_model_object(model)
-    render_overridable(:inspect_model, :locals => { :inspect_model => model })
+  def inspect_model_object(model, locals={})
+    render_overridable(:inspect_model,
+      :locals => { :inspect_model => model,
+                   :show_instance_variables => true,
+                   :show_attributes => true }.merge(locals))
   end
 
   def inspect_value(value)

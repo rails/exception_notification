@@ -33,6 +33,8 @@ class ExceptionNotifier < ActionMailer::Base
   @@sections = %w(request session environment backtrace)
   cattr_accessor :sections
 
+  def self.reloadable?; false; end
+
   def exception_notification(exception, controller, request, data={})
     subject    "#{email_prefix}#{controller.controller_name}##{controller.action_name} (#{exception.class}) #{exception.message.inspect}"
 
