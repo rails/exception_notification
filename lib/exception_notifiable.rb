@@ -54,11 +54,17 @@ module ExceptionNotifiable
   end
 
   def render_404
-    render :file => "#{RAILS_ROOT}/public/404.html", :status => "404 Not Found"
+    respond_to do |type|
+      type.html { render :file => "#{RAILS_ROOT}/public/404.html", :status => "404 Not Found" }
+      type.all  { render :nothing => true, :status => "404 Not Found" }
+    end
   end
 
   def render_500
-    render :file => "#{RAILS_ROOT}/public/500.html", :status => "500 Error"
+    respond_to do |type|
+      type.html { render :file => "#{RAILS_ROOT}/public/500.html", :status => "500 Error" }
+      type.all  { render :nothing => true, :status => "500 Error" }
+    end
   end
 
   def rescue_action_in_public(exception)
