@@ -3,7 +3,7 @@
 <% attrs = inspect_model.attributes -%>
 <% max = attrs.keys.max { |a,b| a.length <=> b.length } -%>
 <% attrs.keys.sort.each do |attr| -%>
-* <%= "%*-s: %s" % [max.length, attr, object_to_yaml(attrs[attr]).gsub(/\n/, "\n  ")] %>
+* <%= "%*-s: %s" % [max.length, attr, object_to_yaml(attrs[attr]).gsub(/\n/, "\n  ").strip] %>
 <% end -%>
 <% end -%>
 
