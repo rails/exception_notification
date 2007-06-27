@@ -23,6 +23,7 @@ require 'pp'
 module ExceptionNotifierHelper
   VIEW_PATH = "views/exception_notifier"
   APP_PATH = "#{RAILS_ROOT}/app/#{VIEW_PATH}"
+  PARAM_FILTER_REPLACEMENT = "[FILTERED]"
 
   def render_section(section)
     RAILS_DEFAULT_LOGGER.info("rendering section #{section.inspect}")
@@ -59,5 +60,18 @@ module ExceptionNotifierHelper
 
   def object_to_yaml(object)
     object.to_yaml.sub(/^---\s*/m, "")
+  end
+
+  def exclude_raw_post_parameters?
+    @controller && @controller.respond_to?(:filter_parameters)
+  end
+  
+  def filter_sensitive_post_data_parameters(parameters)
+    exclude_raw_post_parameters? ? @controller.filter_parameters(parameters) : parameters
+  end
+  
+  def filter_sensitive_post_data_from_env(env_key, env_value)
+    return env_value unless exclude_raw_post_parameters?
+    (env_key =~ /RAW_POST_DATA/i) ? PARAM_FILTER_REPLACEMENT : env_value
   end
 end
