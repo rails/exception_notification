@@ -46,6 +46,14 @@ module ExceptionNotifiable
         write_inheritable_attribute(:exception_data, deliverer)
       end
     end
+
+    def exceptions_to_treat_as_404
+      exceptions = [ActiveRecord::RecordNotFound,
+                    ActionController::UnknownController,
+                    ActionController::UnknownAction]
+      exceptions << ActionController::RoutingError if ActionController.const_defined?(:RoutingError)
+      exceptions
+    end
   end
 
   private
@@ -71,7 +79,7 @@ module ExceptionNotifiable
 
     def rescue_action_in_public(exception)
       case exception
-        when *exceptions_to_treat_as_404
+        when *self.class.exceptions_to_treat_as_404
           render_404
 
         else          
@@ -87,13 +95,5 @@ module ExceptionNotifiable
           ExceptionNotifier.deliver_exception_notification(exception, self,
             request, data)
       end
-    end
-
-    def exceptions_to_treat_as_404
-      exceptions = [ActiveRecord::RecordNotFound,
-                    ActionController::UnknownController,
-                    ActionController::UnknownAction]
-      exceptions << ActionController::RoutingError if ActionController.const_defined?(:RoutingError)
-      exceptions
     end
 end
