@@ -36,6 +36,8 @@ class ExceptionNotifier < ActionMailer::Base
   def self.reloadable?; false; end
 
   def exception_notification(exception, controller, request, data={})
+    content_type "text/plain"
+
     subject    "#{email_prefix}#{controller.controller_name}##{controller.action_name} (#{exception.class}) #{exception.message.inspect}"
 
     recipients exception_recipients
