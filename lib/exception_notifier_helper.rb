@@ -37,7 +37,7 @@ module ExceptionNotifierHelper
   def render_overridable(partial, options={})
     paths = partial_path(partial)
     if path = paths.find {|p| File.exist?(p) }
-      render(options.merge(:file => p, :use_full_path => false))
+      render(options.merge(:file => path, :use_full_path => false))
     else
       ""
     end
