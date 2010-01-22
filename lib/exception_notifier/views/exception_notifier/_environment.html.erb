@@ -1,8 +1,8 @@
 <% filtered_env = @request.filtered_env -%>
 <% max = filtered_env.keys.max { |a, b| a.length <=> b.length } -%>
 <% filtered_env.keys.sort.each do |key| -%>
-* <%= "%-*s: %s" % [max.length, key, filtered_env[key].to_s.strip] %>
+* <%=raw "%-*s: %s" % [max.length, key, filtered_env[key].to_s.strip] %>
 <% end -%>
 
-* Process: <%= $$ %>
-* Server : <%= `hostname -s`.chomp %>
+* Process: <%=raw $$ %>
+* Server : <%=raw `hostname -s`.chomp %>
