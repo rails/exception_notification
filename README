@@ -39,23 +39,6 @@ just set any or all of the following values:
   # defaults to "[ERROR] "
   ExceptionNotifier.email_prefix = "[APP] "
 
-Email notifications will only occur when the IP address is determined not to
-be local. You can specify certain addresses to always be local so that you'll
-get a detailed error instead of the generic error page. You do this in your
-controller (or even per-controller):
-
-  consider_local "64.72.18.143", "14.17.21.25"
-
-You can specify subnet masks as well, so that all matching addresses are
-considered local:
-
-  consider_local "64.72.18.143/24"
-
-The address "127.0.0.1" is always considered local. If you want to completely
-reset the list of all addresses (for instance, if you wanted "127.0.0.1" to
-NOT be considered local), you can simply do, somewhere in your controller:
-
-  local_addresses.clear
 
 == Customization
 
@@ -68,9 +51,7 @@ access to the following variables:
 * @controller: the controller that caused the error
 * @request: the current request object
 * @exception: the exception that was raised
-* @host: the name of the host that made the request
 * @backtrace: a sanitized version of the exception's backtrace
-* @rails_root: a sanitized version of RAILS_ROOT
 * @data: a hash of optional data values that were passed to the notifier
 * @sections: the array of sections to include in the email
 
@@ -82,13 +63,14 @@ new section requires information that isn't available by default, make sure
 it is made available to the email using the exception_data macro:
 
   class ApplicationController < ActionController::Base
+    before_filter :log_additional_data
     ...
     protected
-      exception_data :additional_data
-
-      def additional_data
-        { :document => @document,
-          :person => @person }
+      def log_additional_data
+        request.env["exception_notifier.exception_data"] = {
+          :document => @document,
+          :person => @person
+        }
       end
     ...
   end
@@ -96,16 +78,6 @@ it is made available to the email using the exception_data macro:
 In the above case, @document and @person would be made available to the email
 renderer, allowing your new section(s) to access and display them. See the
 existing sections defined by the plugin for examples of how to write your own.
-
-== Advanced Customization
-
-By default, the email notifier will only notify on critical errors. For
-ActiveRecord::RecordNotFound and ActionController::UnknownAction, it will
-simply render the contents of your public/404.html file. Other exceptions
-will render public/500.html and will send the email notification. If you want
-to use different rules for the notification, you will need to implement your
-own rescue_action_in_public method. You can look at the default implementation
-in ExceptionNotifiable for an example of how to go about that.
 
 
 Copyright (c) 2005 Jamis Buck, released under the MIT license
