@@ -32,48 +32,34 @@ module ExceptionNotifiable
       end
     end
 
-    def exceptions_to_treat_as_404
+    def exceptions_to_skip
       exceptions = [ActiveRecord::RecordNotFound,
                     ActionController::UnknownController,
                     ActionController::UnknownAction]
       exceptions << ActionController::RoutingError if ActionController.const_defined?(:RoutingError)
       exceptions
     end
+    
+    def deliver_exception_notification?(exception)
+      !exceptions_to_skip.include?(exception.class)
+    end
   end
 
-  private
-
-    def render_404
-      respond_to do |type|
-        type.html { render :file => "#{RAILS_ROOT}/public/404.html", :status => "404 Not Found" }
-        type.all  { render :nothing => true, :status => "404 Not Found" }
-      end
+private
+  def rescue_action_in_public(exception)
+    super
+    notify_about_exception(exception) if self.class.deliver_exception_notification?(exception)
+  end
+  
+  #does no rendering so callable in a rescue, or elsewhere
+  def notify_about_exception(exception)
+    deliverer = self.class.exception_data
+    data = case deliverer
+      when nil then {}
+      when Symbol then send(deliverer)
+      when Proc then deliverer.call(self)
     end
 
-    def render_500
-      respond_to do |type|
-        type.html { render :file => "#{RAILS_ROOT}/public/500.html", :status => "500 Error" }
-        type.all  { render :nothing => true, :status => "500 Error" }
-      end
-    end
-
-    def rescue_action_in_public(exception)
-      case exception
-        when *self.class.exceptions_to_treat_as_404
-          render_404
-
-        else          
-          render_500
-
-          deliverer = self.class.exception_data
-          data = case deliverer
-            when nil then {}
-            when Symbol then send(deliverer)
-            when Proc then deliverer.call(self)
-          end
-
-          ExceptionNotifier.deliver_exception_notification(exception, self,
-            request, data)
-      end
-    end
+    ExceptionNotifier.deliver_exception_notification(exception, self, request, data)
+  end
 end
