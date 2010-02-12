@@ -1,5 +1,3 @@
-require 'ipaddr'
-
 # Copyright (c) 2005 Jamis Buck
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -26,19 +24,6 @@ module ExceptionNotifiable
   end
 
   module ClassMethods
-    def consider_local(*args)
-      local_addresses.concat(args.flatten.map { |a| IPAddr.new(a) })
-    end
-
-    def local_addresses
-      addresses = read_inheritable_attribute(:local_addresses)
-      unless addresses
-        addresses = [IPAddr.new("127.0.0.1")]
-        write_inheritable_attribute(:local_addresses, addresses)
-      end
-      addresses
-    end
-
     def exception_data(deliverer=self)
       if deliverer == self
         read_inheritable_attribute(:exception_data)
@@ -57,11 +42,6 @@ module ExceptionNotifiable
   end
 
   private
-
-    def local_request?
-      remote = IPAddr.new(request.remote_ip)
-      !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
-    end
 
     def render_404
       respond_to do |type|

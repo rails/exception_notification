@@ -39,6 +39,8 @@ just set any or all of the following values:
   # defaults to "[ERROR] "
   ExceptionNotifier.email_prefix = "[APP] "
 
+== Deprecated local_request? overriding
+
 Email notifications will only occur when the IP address is determined not to
 be local. You can specify certain addresses to always be local so that you'll
 get a detailed error instead of the generic error page. You do this in your
@@ -56,6 +58,15 @@ reset the list of all addresses (for instance, if you wanted "127.0.0.1" to
 NOT be considered local), you can simply do, somewhere in your controller:
 
   local_addresses.clear
+
+NOTE: The above functionality has has been pulled out to consider_local.rb,
+as interfering with rails local determination is orthogonal to notification, 
+unnecessarily clutters backtraces, and even occasionally errs on odd ip or 
+requests bugs. To return original functionality add an initializer with:
+ 
+  ActionController::Base.send :include, ConsiderLocal
+
+or just include ConsiderLocal in a controller (or ApplicationController).
 
 == Customization
 
