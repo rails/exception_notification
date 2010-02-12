@@ -21,6 +21,7 @@
 module ExceptionNotifiable
   def self.included(target)
     target.extend(ClassMethods)
+    target.skip_exception_notifications false
   end
 
   module ClassMethods
@@ -40,8 +41,12 @@ module ExceptionNotifiable
       exceptions
     end
     
+    def skip_exception_notifications(boolean=true)
+      write_inheritable_attribute(:deliver_exception_notifications, !boolean)
+    end
+    
     def deliver_exception_notification?(exception)
-      !exceptions_to_skip.include?(exception.class)
+      read_inheritable_attribute(:deliver_exception_notifications) && !exceptions_to_skip.include?(exception.class)
     end
   end
 

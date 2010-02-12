@@ -39,6 +39,13 @@ just set any or all of the following values:
   # defaults to "[ERROR] "
   ExceptionNotifier.email_prefix = "[APP] "
 
+Even if you have mixed into ApplicationController you can skip notification in
+some controllers by
+  
+  class MyController  < ApplicationController
+    skip_exception_notifications
+  end
+  
 == Deprecated local_request? overriding
 
 Email notifications will only occur when the IP address is determined not to
@@ -66,7 +73,11 @@ requests bugs. To return original functionality add an initializer with:
  
   ActionController::Base.send :include, ConsiderLocal
 
-or just include ConsiderLocal in a controller (or ApplicationController).
+or just include it per controller that wants it
+
+ class MyController  < ApplicationController
+   include ConsiderLocal
+ end
 
 == Customization
 
