@@ -75,4 +75,12 @@ module ExceptionNotifierHelper
     return PARAM_FILTER_REPLACEMENT if (env_key =~ /RAW_POST_DATA/i)
     return @controller.__send__(:filter_parameters, {env_key => env_value}).values[0]
   end
+  
+  def exception_source
+    if @controller.respond_to?(:controller_name)
+      "in #{@controller.controller_name}##{@controller.action_name}"
+    else
+      "outside of a controller"
+    end
+  end
 end
