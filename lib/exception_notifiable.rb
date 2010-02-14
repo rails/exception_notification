@@ -32,31 +32,27 @@ module ExceptionNotifiable
         write_inheritable_attribute(:exception_data, deliverer)
       end
     end
-
-    def exceptions_to_skip
-      exceptions = [ActiveRecord::RecordNotFound,
-                    ActionController::UnknownController,
-                    ActionController::UnknownAction]
-      exceptions << ActionController::RoutingError if ActionController.const_defined?(:RoutingError)
-      exceptions
-    end
     
     def skip_exception_notifications(boolean=true)
-      write_inheritable_attribute(:deliver_exception_notifications, !boolean)
+      write_inheritable_attribute(:skip_exception_notifications, boolean)
     end
     
-    def deliver_exception_notification?(exception)
-      read_inheritable_attribute(:deliver_exception_notifications) && !exceptions_to_skip.include?(exception.class)
+    def skip_exception_notifications?
+      read_inheritable_attribute(:skip_exception_notifications)
     end
   end
 
 private
+
   def rescue_action_in_public(exception)
     super
-    notify_about_exception(exception) if self.class.deliver_exception_notification?(exception)
+    notify_about_exception(exception) if deliver_exception_notification?
   end
   
-  #does no rendering so callable in a rescue, or elsewhere
+  def deliver_exception_notification?
+    !self.class.skip_exception_notifications? && ![404, "404 Not Found"].include?(response.status)
+  end
+  
   def notify_about_exception(exception)
     deliverer = self.class.exception_data
     data = case deliverer
