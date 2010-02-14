@@ -21,8 +21,9 @@ require 'pp'
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 module ExceptionNotifierHelper
+  EXCEPTION_NOTIFIER_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
   VIEW_PATH = "views/exception_notifier"
-  APP_PATH = "#{RAILS_ROOT}/app/#{VIEW_PATH}"
+  RAILS_VIEW_PATH = "#{RAILS_ROOT}/app/#{VIEW_PATH}"
   PARAM_FILTER_REPLACEMENT = "[FILTERED]"
 
   def render_section(section)
@@ -35,7 +36,7 @@ module ExceptionNotifierHelper
   end
 
   def render_overridable(partial, options={})
-    paths = partial_path(partial)
+    paths = partial_paths(partial)
     if path = paths.find {|p| File.exist?(p) }
       render(options.merge(:file => path, :use_full_path => false))
     else
@@ -46,8 +47,8 @@ module ExceptionNotifierHelper
   def partial_paths(partial)
     exts = %w{ rhtml html.erb }
     exts.map {|ext|
-      [ "#{APP_PATH}/_#{partial}.#{ext}",
-        "#{File.dirname(__FILE__)}/../#{VIEW_PATH}/_#{partial}.#{ext}"]
+      [ "#{RAILS_VIEW_PATH}/_#{partial}.#{ext}",
+        "#{EXCEPTION_NOTIFIER_PATH}/#{VIEW_PATH}/_#{partial}.#{ext}"]
     }.flatten
   end
 
