@@ -79,5 +79,15 @@ In the above case, @document and @person would be made available to the email
 renderer, allowing your new section(s) to access and display them. See the
 existing sections defined by the plugin for examples of how to write your own.
 
+== Rails 2.3 stable and earlier
+
+If you are running Rails 2.3 then see the branch for that: 
+ 
+  http://github.com/rails/exception_notification/tree/2-3-stable
+
+If you are running pre-rack Rails then see this tag: 
+
+  http://github.com/rails/exception_notification/tree/pre-2-3
+
 
 Copyright (c) 2005 Jamis Buck, released under the MIT license
