@@ -13,32 +13,12 @@ environment, and also gives a backtrace of the exception.
 
 == Usage
 
-First, include the ExceptionNotifiable mixin in whichever controller you want
-to generate error emails (typically ApplicationController):
+As of Rails 3 ExceptionNotifier is used as a rack middleware
 
-  class ApplicationController < ActionController::Base
-    include ExceptionNotifiable
-    ...
-  end
-
-Then, specify the email recipients in your environment:
-
-  ExceptionNotifier.exception_recipients = %w(joe@schmoe.com bill@schmoe.com)
-
-And that's it! The defaults take care of the rest.
-
-== Configuration
-
-You can tweak other values to your liking, as well. In your environment file,
-just set any or all of the following values:
-
-  # defaults to exception.notifier@default.com
-  ExceptionNotifier.sender_address =
-    %("Application Error" <app.error@myapp.com>)
-
-  # defaults to "[ERROR] "
-  ExceptionNotifier.email_prefix = "[APP] "
-
+  Whatever::Application.config.middleware.use ExceptionNotifier,
+    :email_prefix => "[Whatever] ",
+    :sender_address => %{"notifier" <notifier@example.com>},
+    :exception_recipients => %w{exceptions@example.com}
 
 == Customization
 
