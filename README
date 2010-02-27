@@ -119,15 +119,22 @@ In the above case, @document and @person would be made available to the email
 renderer, allowing your new section(s) to access and display them. See the
 existing sections defined by the plugin for examples of how to write your own.
 
-== Advanced Customization
+== 404s errors
 
-By default, the email notifier will only notify on critical errors. For
-ActiveRecord::RecordNotFound and ActionController::UnknownAction, it will
-simply render the contents of your public/404.html file. Other exceptions
-will render public/500.html and will send the email notification. If you want
-to use different rules for the notification, you will need to implement your
-own rescue_action_in_public method. You can look at the default implementation
-in ExceptionNotifiable for an example of how to go about that.
+Notification is skipped if you return a 404 status, which happens by default 
+for an ActiveRecord::RecordNotFound or ActionController::UnknownAction error.
 
+== Manually notifying of error in a rescue block
+
+If your controller action manually handles an error, the notifier will never be
+run.  To manually notify of an error call notify_about_exception from within the
+rescue block
+
+  def index
+    #risky operation here
+  rescue StandardError => error
+    #custom error handling here
+    notify_about_exception(error)
+  end
 
 Copyright (c) 2005 Jamis Buck, released under the MIT license
