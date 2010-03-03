@@ -40,7 +40,7 @@ class ExceptionNotifier < ActionMailer::Base
   def exception_notification(exception, controller, request, data={})
     content_type "text/plain"
 
-    subject    "#{email_prefix}#{controller.controller_name}##{controller.action_name} (#{exception.class}) #{exception.message.inspect}"
+    subject    "#{email_prefix}#{ExceptionNotifier.exception_source(controller)} (#{exception.class}) #{exception.message.inspect}"
 
     recipients exception_recipients
     from       sender_address
@@ -50,6 +50,14 @@ class ExceptionNotifier < ActionMailer::Base
                   :backtrace => sanitize_backtrace(exception.backtrace),
                   :rails_root => rails_root, :data => data,
                   :sections => sections })
+  end
+
+  def self.exception_source(controller)
+    if controller.respond_to?(:controller_name)
+      "in #{controller.controller_name}##{controller.action_name}"
+    else
+      "outside of a controller"
+    end
   end
 
   private

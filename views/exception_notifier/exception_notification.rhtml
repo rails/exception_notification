@@ -1,4 +1,4 @@
-A <%= @exception.class %> occurred <%= exception_source %>:
+A <%= @exception.class %> occurred <%= ExceptionNotifier.exception_source(@controller) %>:
 
   <%= @exception.message %>
   <%= @backtrace.first %>
