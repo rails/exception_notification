@@ -21,6 +21,9 @@ require 'pathname'
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class ExceptionNotifier < ActionMailer::Base
+  self.mailer_name = 'exception_notifier'
+  self.view_paths << "#{File.dirname(__FILE__)}/../views"
+  
   @@sender_address = %("Exception Notifier" <exception.notifier@default.com>)
   cattr_accessor :sender_address
 
@@ -32,8 +35,6 @@ class ExceptionNotifier < ActionMailer::Base
 
   @@sections = %w(request session environment backtrace)
   cattr_accessor :sections
-
-  self.template_root = "#{File.dirname(__FILE__)}/../views"
 
   def self.reloadable?() false end
 
@@ -60,15 +61,15 @@ class ExceptionNotifier < ActionMailer::Base
     end
   end
 
-  private
+private
 
-    def sanitize_backtrace(trace)
-      re = Regexp.new(/^#{Regexp.escape(rails_root)}/)
-      trace.map { |line| Pathname.new(line.gsub(re, "[RAILS_ROOT]")).cleanpath.to_s }
-    end
+  def sanitize_backtrace(trace)
+    re = Regexp.new(/^#{Regexp.escape(rails_root)}/)
+    trace.map { |line| Pathname.new(line.gsub(re, "[RAILS_ROOT]")).cleanpath.to_s }
+  end
 
-    def rails_root
-      @rails_root ||= Pathname.new(RAILS_ROOT).cleanpath.to_s
-    end
+  def rails_root
+    @rails_root ||= Pathname.new(RAILS_ROOT).cleanpath.to_s
+  end
 
 end

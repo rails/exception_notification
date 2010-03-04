@@ -21,39 +21,19 @@ require 'pp'
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 module ExceptionNotifierHelper
-  EXCEPTION_NOTIFIER_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-  VIEW_PATH = "views/exception_notifier"
-  RAILS_VIEW_PATH = "#{RAILS_ROOT}/app/#{VIEW_PATH}"
   PARAM_FILTER_REPLACEMENT = "[FILTERED]"
 
   def render_section(section)
     RAILS_DEFAULT_LOGGER.info("rendering section #{section.inspect}")
-    summary = render_overridable(section).strip
+    summary = render("exception_notifier/#{section}").strip
     unless summary.blank?
-      title = render_overridable(:title, :locals => { :title => section }).strip
+      title = render("exception_notifier/title", :locals => { :title => section }).strip
       "#{title}\n\n#{summary.gsub(/^/, "  ")}\n\n"
     end
   end
 
-  def render_overridable(partial, options={})
-    paths = partial_paths(partial)
-    if path = paths.find {|p| File.exist?(p) }
-      render(options.merge(:file => path, :use_full_path => false))
-    else
-      ""
-    end
-  end
-
-  def partial_paths(partial)
-    exts = %w{ rhtml html.erb }
-    exts.map {|ext|
-      [ "#{RAILS_VIEW_PATH}/_#{partial}.#{ext}",
-        "#{EXCEPTION_NOTIFIER_PATH}/#{VIEW_PATH}/_#{partial}.#{ext}"]
-    }.flatten
-  end
-
   def inspect_model_object(model, locals={})
-    render_overridable(:inspect_model,
+    render('exception_notifier/inspect_model',
       :locals => { :inspect_model => model,
                    :show_instance_variables => true,
                    :show_attributes => true }.merge(locals))
