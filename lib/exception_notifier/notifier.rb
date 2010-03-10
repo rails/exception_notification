@@ -4,7 +4,7 @@ require 'pp'
 class ExceptionNotifier
   class Notifier < ActionMailer::Base
     self.mailer_name = 'exception_notifier'
-    self.view_paths << "#{File.dirname(__FILE__)}/views"
+    self.append_view_path "#{File.dirname(__FILE__)}/views"
 
     class << self
       def default_sender_address
