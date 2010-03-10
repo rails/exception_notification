@@ -45,15 +45,12 @@ class ExceptionNotifier
         instance_variable_set("@#{name}", value)
       end
 
-      content_type "text/plain"
-
       prefix   = "#{@options[:email_prefix]}#{@controller.controller_name}##{@controller.action_name}"
-      subject    "#{prefix} (#{@exception.class}) #{@exception.message.inspect}"
-
-      recipients @options[:exception_recipients]
-      from       @options[:sender_address]
-
-      render "#{mailer_name}/exception_notification"
+      subject  = "#{prefix} (#{@exception.class}) #{@exception.message.inspect}"
+      
+      mail(:to => @options[:exception_recipients], :from => @options[:sender_address], :subject => subject) do |format|
+        format.text { render "#{mailer_name}/exception_notification" }
+      end
     end
 
     private
