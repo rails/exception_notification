@@ -20,9 +20,9 @@ require 'pathname'
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-class ExceptionNotifier < ActionMailer::Base
+class ExceptionNotification::Notifier < ActionMailer::Base
   self.mailer_name = 'exception_notifier'
-  self.view_paths << "#{File.dirname(__FILE__)}/../views"
+  self.view_paths << "#{File.dirname(__FILE__)}/../../views"
   
   @@sender_address = %("Exception Notifier" <exception.notifier@default.com>)
   cattr_accessor :sender_address
@@ -39,15 +39,16 @@ class ExceptionNotifier < ActionMailer::Base
   def self.reloadable?() false end
 
   def exception_notification(exception, controller, request, data={})
+    source = self.class.exception_source(controller)
     content_type "text/plain"
 
-    subject    "#{email_prefix}#{ExceptionNotifier.exception_source(controller)} (#{exception.class}) #{exception.message.inspect}"
+    subject    "#{email_prefix}#{source} (#{exception.class}) #{exception.message.inspect}"
 
     recipients exception_recipients
     from       sender_address
 
     body       data.merge({ :controller => controller, :request => request,
-                  :exception => exception, :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
+                  :exception => exception, :exception_source => source, :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
                   :backtrace => sanitize_backtrace(exception.backtrace),
                   :rails_root => rails_root, :data => data,
                   :sections => sections })
@@ -71,5 +72,4 @@ private
   def rails_root
     @rails_root ||= Pathname.new(RAILS_ROOT).cleanpath.to_s
   end
-
 end

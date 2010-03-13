@@ -17,13 +17,13 @@ First, include the ExceptionNotifiable mixin in whichever controller you want
 to generate error emails (typically ApplicationController):
 
   class ApplicationController < ActionController::Base
-    include ExceptionNotifiable
+    include ExceptionNotification::Notifiable
     ...
   end
 
 Then, specify the email recipients in your environment:
 
-  ExceptionNotifier.exception_recipients = %w(joe@schmoe.com bill@schmoe.com)
+  ExceptionNotification::Notifier.exception_recipients = %w(joe@schmoe.com bill@schmoe.com)
 
 And that's it! The defaults take care of the rest.
 
@@ -33,11 +33,11 @@ You can tweak other values to your liking, as well. In your environment file,
 just set any or all of the following values:
 
   # defaults to exception.notifier@default.com
-  ExceptionNotifier.sender_address =
+  ExceptionNotification::Notifier.sender_address =
     %("Application Error" <app.error@myapp.com>)
 
   # defaults to "[ERROR] "
-  ExceptionNotifier.email_prefix = "[APP] "
+  ExceptionNotification::Notifier.email_prefix = "[APP] "
 
 Even if you have mixed into ApplicationController you can skip notification in
 some controllers by
@@ -76,7 +76,7 @@ requests bugs. To return original functionality add an initializer with:
 or just include it per controller that wants it
 
  class MyController  < ApplicationController
-   include ConsiderLocal
+   include ExceptionNotification::ConsiderLocal
  end
 
 == Customization
@@ -97,7 +97,7 @@ access to the following variables:
 * @sections: the array of sections to include in the email
 
 You can reorder the sections, or exclude sections completely, by altering the
-ExceptionNotifier.sections variable. You can even add new sections that
+ExceptionNotification::Notifier.sections variable. You can even add new sections that
 describe application-specific data--just add the section's name to the list
 (whereever you'd like), and define the corresponding partial. Then, if your
 new section requires information that isn't available by default, make sure

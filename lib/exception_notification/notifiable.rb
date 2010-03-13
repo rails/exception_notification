@@ -18,7 +18,7 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-module ExceptionNotifiable
+module ExceptionNotification::Notifiable
   def self.included(target)
     target.extend(ClassMethods)
     target.skip_exception_notifications false
@@ -61,6 +61,6 @@ private
       when Proc then deliverer.call(self)
     end
 
-    ExceptionNotifier.deliver_exception_notification(exception, self, request, data)
+    ExceptionNotification::Notifier.deliver_exception_notification(exception, self, request, data)
   end
 end
