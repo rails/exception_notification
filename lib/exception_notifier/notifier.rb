@@ -59,10 +59,25 @@ class ExceptionNotifier
     end
 
     private
+      
       def clean_backtrace(exception)
         Rails.respond_to?(:backtrace_cleaner) ?
           Rails.backtrace_cleaner.send(:filter, exception.backtrace) :
           exception.backtrace
       end
+      
+      helper_method :inspect_object
+      
+      def inspect_object(object)
+        case object
+        when Hash, Array
+          object.inspect
+        when ActionController::Base
+          "#{object.controller_name}##{object.action_name}"
+        else
+          object.to_s
+        end
+      end
+      
   end
 end
