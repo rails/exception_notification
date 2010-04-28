@@ -59,6 +59,11 @@ In the above case, @document and @person would be made available to the email
 renderer, allowing your new section(s) to access and display them. See the
 existing sections defined by the plugin for examples of how to write your own.
 
+== Notification
+
+After an exception notification has been delivered the rack environment variable
+'exception_notifier.delivered' will be set to +true+.
+
 == Rails 2.3 stable and earlier
 
 If you are running Rails 2.3 then see the branch for that: 
