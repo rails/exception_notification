@@ -1,2 +1,2 @@
 * session id: <%= raw @request.session['session_id'].inspect.html_safe %>
-* data: <%= raw PP.pp(@request.session.inspect.gsub(/\n/, "\n  ").strip.html_safe) %>
+* data: <%= raw PP.pp(@request.session, "") %>
