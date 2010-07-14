@@ -31,11 +31,16 @@ class ExceptionNotifier
       end
     end
 
+    class MissingController
+      def method_missing(*args, &block)
+      end
+    end
+
     def exception_notification(env, exception)
       @env        = env
       @exception  = exception
       @options    = (env['exception_notifier.options'] || {}).reverse_merge(self.class.default_options)
-      @controller = env['action_controller.instance']
+      @controller = env['action_controller.instance'] || MissingController.new
       @request    = ActionDispatch::Request.new(env)
       @backtrace  = clean_backtrace(exception)
       @sections   = @options[:sections]
@@ -47,7 +52,7 @@ class ExceptionNotifier
 
       prefix   = "#{@options[:email_prefix]}#{@controller.controller_name}##{@controller.action_name}"
       subject  = "#{prefix} (#{@exception.class}) #{@exception.message.inspect}"
-      
+
       mail(:to => @options[:exception_recipients], :from => @options[:sender_address], :subject => subject) do |format|
         format.text { render "#{mailer_name}/exception_notification" }
       end
