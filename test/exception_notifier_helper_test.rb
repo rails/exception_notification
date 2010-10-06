@@ -54,7 +54,20 @@ class ExceptionNotifierHelperTest < Test::Unit::TestCase
     stub_controller(ControllerWithFilterParameters.new)
     assert_equal({"PARAM" => "[FILTERED]" }, @helper.filter_sensitive_post_data_parameters({"PARAM" => 'secret'}))
   end
+
+  # Controller with ConsiderLocal
+
+  class ControllerWithConsiderLocal
+    include ExceptionNotification::ConsiderLocal
+  end
   
+  def test_consider_local_and_local_addresses
+    assert_equal [IPAddr.new("127.0.0.1")], ControllerWithConsiderLocal.local_addresses
+    ControllerWithConsiderLocal.consider_local '192.168.1.1'
+    assert_equal [IPAddr.new("127.0.0.1"), IPAddr.new("192.168.1.1")],
+      ControllerWithConsiderLocal.local_addresses
+  end
+
   private
     def stub_controller(controller)
       @helper.instance_variable_set(:@controller, controller)
