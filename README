@@ -21,7 +21,7 @@ As of Rails 3 ExceptionNotifier is used as a rack middleware
     :exception_recipients => %w{exceptions@example.com}
 
 If you need to send exception notifications from a background process like
-delayed job you must manually send the exeption with:
+delayed job you must manually send the exception with:
 
     ExceptionNotifier::Notifier.background_exception_notification(e)
 
