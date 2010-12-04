@@ -20,6 +20,11 @@ As of Rails 3 ExceptionNotifier is used as a rack middleware
     :sender_address => %{"notifier" <notifier@example.com>},
     :exception_recipients => %w{exceptions@example.com}
 
+If you need to send exception notifications from a background process like
+delayed job you must manually send the exeption with:
+
+    ExceptionNotifier::Notifier.background_exception_notification(e)
+
 == Customization
 
 By default, the notification email includes four parts: request, session,
@@ -66,11 +71,11 @@ After an exception notification has been delivered the rack environment variable
 
 == Rails 2.3 stable and earlier
 
-If you are running Rails 2.3 then see the branch for that: 
- 
+If you are running Rails 2.3 then see the branch for that:
+
   http://github.com/rails/exception_notification/tree/2-3-stable
 
-If you are running pre-rack Rails then see this tag: 
+If you are running pre-rack Rails then see this tag:
 
   http://github.com/rails/exception_notification/tree/pre-2-3
 
