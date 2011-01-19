@@ -59,6 +59,12 @@ In the above case, @document and @person would be made available to the email
 renderer, allowing your new section(s) to access and display them. See the
 existing sections defined by the plugin for examples of how to write your own.
 
+=== Setting View Path for Custom Sections
+
+By default the ExceptionNotifier only looks in its own view path. You can add the Rails view path with the following code.
+
+  ExceptionNotifier::Notifier.append_view_path "#{Rails.root}/app/views"
+
 == Notification
 
 After an exception notification has been delivered the rack environment variable
