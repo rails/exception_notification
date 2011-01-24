@@ -50,7 +50,7 @@ private
   end
   
   def deliver_exception_notification?
-    !self.class.skip_exception_notifications? && ![404, "404 Not Found"].include?(response.status)
+    !self.class.skip_exception_notifications? && !["404", "422", "404 Not Found"].include?(response.status.to_s)
   end
   
   def notify_about_exception(exception)
