@@ -13,12 +13,22 @@ environment, and also gives a backtrace of the exception.
 
 == Usage
 
+INSTALLATION for Rails 3:
 As of Rails 3 ExceptionNotifier is used as a rack middleware
+
+-in your Gemfile:
+gem "exception_notification", "1.0.0 (or later)", :require => "exception_notifier", :git => "git://github.com/sickill/exception_notification.git"
+
+-in your config/environments/development.rb or production.rb
 
   Whatever::Application.config.middleware.use ExceptionNotifier,
     :email_prefix => "[Whatever] ",
     :sender_address => %{"notifier" <notifier@example.com>},
     :exception_recipients => %w{exceptions@example.com}
+
+INSTALLATION For rails 2:
+look here:
+http://github.com/rails/exception_notification/tree/2-3-stable
 
 == Customization
 
