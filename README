@@ -15,7 +15,8 @@ environment, and also gives a backtrace of the exception.
 
 As of Rails 3 ExceptionNotifier is used as a rack middleware
 
-  Whatever::Application.config.middleware.use ExceptionNotifier,
+  # application.rb
+  config.middleware.use ::ExceptionNotifier,
     :email_prefix => "[Whatever] ",
     :sender_address => %{"notifier" <notifier@example.com>},
     :exception_recipients => %w{exceptions@example.com}
