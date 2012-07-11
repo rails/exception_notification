@@ -1,2 +1,2 @@
-* session id: <%= @request.session_options[:id] %>
-* data: <%= @request.session.inspect %>
+* session id: <%=raw @request.session_options[:id] %>
+* data: <%=raw PP.pp @request.session.inspect.gsub(/\n/, "\n  ").strip.html_safe %>
