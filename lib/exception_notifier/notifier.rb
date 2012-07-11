@@ -5,6 +5,7 @@ class ExceptionNotifier
   class Notifier < ActionMailer::Base
     self.mailer_name = 'exception_notifier'
     self.append_view_path "#{File.dirname(__FILE__)}/views"
+    self.append_view_path "#{Rails.root}/app/views"
 
     class << self
       def default_sender_address
