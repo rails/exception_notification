@@ -4,7 +4,8 @@ require 'exception_notifier/notifier'
 class ExceptionNotifier
   def self.default_ignore_exceptions
     [].tap do |exceptions|
-      exceptions << ActiveRecord::RecordNotFound if defined? ActiveRecord
+      exceptions << ActiveRecord::RecordNotFound if defined? ActiveRecord and defined? ActiveRecord::RecordNotFound
+      exceptions << ActiveRecord::ActiveRecordError if defined? ActiveRecord and defined? ActiveRecord::ActiveRecordError
       exceptions << AbstractController::ActionNotFound if defined? AbstractController
       exceptions << ActionController::RoutingError if defined? ActionController
     end
